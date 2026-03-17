@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统设置 - AI 智能量化交易</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .nav-btn:hover {
+            background: #5568d3;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .save-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: #667eea;
+            margin: 20px 0 15px 0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚙️ 系统设置</h1>
+        <div>
+            <a href="/" class="nav-btn">📊 仪表盘</a>
+            <a href="/settings" class="nav-btn">⚙️ 设置</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="success-message" id="successMessage">✅ 设置已保存成功！</div>
+
+        <!-- 交易所设置 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📈 交易所配置</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>交易模式</label>
+                        <select id="mode">
+                            <option value="testnet">测试网</option>
+                            <option value="live">实盘</option>
+                        </select>
+                        <small>选择测试网或实盘交易</small>
+                    </div>
+                    <div class="form-group">
+                        <label>交易币种</label>
+                        <input type="text" id="symbol" placeholder="BTCUSDT">
+                        <small>例如：BTCUSDT, ETHUSDT</small>
+                    </div>
+                    <div class="form-group">
+                        <label>杠杆倍数</label>
+                        <input type="number" id="leverage" min="1" max="125" value="20">
+                        <small>1-125 倍</small>
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="text" id="api_key">
+                    </div>
+                    <div class="form-group">
+                        <label>API Secret</label>
+                        <input type="text" id="api_secret">
+                    </div>
+                    <div class="form-group">
+                        <label>SOCKS5 代理</label>
+                        <input type="text" id="socks5_proxy" placeholder="socks5://127.0.0.1:20081">
+                        <small>可选，用于科学上网</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术指标组合 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📊 技术指标组合</h2>
+            </div>
+            <div class="card-body">
+                <div class="section-title">选择用于 AI 分析的时间周期（多选）</div>
+                <div class="form-grid">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="timeframe_1h" checked>
+                        <label for="timeframe_1h">1 小时 K 线</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="timeframe_30m" checked>
+                        <label for="timeframe_30m">30 分钟 K 线</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="timeframe_15m" checked>
+                        <label for="timeframe_15m">15 分钟 K 线</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="timeframe_5m" checked>
+                        <label for="timeframe_5m">5 分钟 K 线</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="timeframe_1m" checked>
+                        <label for="timeframe_1m">1 分钟 K 线</label>
+                    </div>
+                </div>
+                
+                <div class="section-title" style="margin-top: 25px;">⚖️ 动态权重调整（总权重必须=100%）</div>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                    <div class="form-group">
+                        <label>1 小时权重 (%)</label>
+                        <input type="range" id="weight_1h" min="0" max="100" value="40" oninput="updateWeightDisplay('1h', this.value)">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <small>当前：<span id="weight_1h_value">40%</span></small>
+                            <small id="weight_1h_display" style="color: #667eea; font-weight: bold;">40%</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>30 分钟权重 (%)</label>
+                        <input type="range" id="weight_30m" min="0" max="100" value="30" oninput="updateWeightDisplay('30m', this.value)">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <small>当前：<span id="weight_30m_value">30%</span></small>
+                            <small id="weight_30m_display" style="color: #667eea; font-weight: bold;">30%</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>15 分钟权重 (%)</label>
+                        <input type="range" id="weight_15m" min="0" max="100" value="15" oninput="updateWeightDisplay('15m', this.value)">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <small>当前：<span id="weight_15m_value">15%</span></small>
+                            <small id="weight_15m_display" style="color: #667eea; font-weight: bold;">15%</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>5 分钟权重 (%)</label>
+                        <input type="range" id="weight_5m" min="0" max="100" value="10" oninput="updateWeightDisplay('5m', this.value)">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <small>当前：<span id="weight_5m_value">10%</span></small>
+                            <small id="weight_5m_display" style="color: #667eea; font-weight: bold;">10%</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>1 分钟权重 (%)</label>
+                        <input type="range" id="weight_1m" min="0" max="100" value="5" oninput="updateWeightDisplay('1m', this.value)">
+                        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+                            <small>当前：<span id="weight_1m_value">5%</span></small>
+                            <small id="weight_1m_display" style="color: #667eea; font-weight: bold;">5%</small>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding: 10px; background: #f5f5f5; border-radius: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span><strong>总权重：</strong><span id="total_weight">100</span>%</span>
+                        <span id="weight_status" style="color: #2e7d32; font-weight: bold;">✓ 正常</span>
+                    </div>
+                </div>
+                <small style="margin-top: 10px; display: block;">💡 提示：勾选的周期才会参与分析，权重自动归一化。拖动滑块可动态调整各周期影响力。</small>
+            </div>
+        </div>
+
+        <!-- 交易参数 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🔄 交易参数</h2>
+            </div>
+            <div class="card-body">
+                <div class="section-title">📦 建仓委托参数</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>网格层数</label>
+                        <input type="number" id="grid_levels" min="1" max="20" value="5">
+                        <small>委托订单数量</small>
+                    </div>
+                    <div class="form-group">
+                        <label>基础数量</label>
+                        <input type="number" id="base_qty" step="0.001" value="0.002">
+                        <small>每个委托的基础数量（BTC）</small>
+                    </div>
+                    <div class="form-group">
+                        <label>最小数量</label>
+                        <input type="number" id="min_qty" step="0.001" value="0.001">
+                        <small>允许的最小持仓数量</small>
+                    </div>
+                    <div class="form-group">
+                        <label>最大数量</label>
+                        <input type="number" id="max_qty" step="0.001" value="0.1">
+                        <small>允许的最大持仓数量</small>
+                    </div>
+                    <div class="form-group">
+                        <label>建仓委托间距 (USDT)</label>
+                        <input type="number" id="grid_spacing" min="10" value="50">
+                        <small>建仓网格之间的价格间距</small>
+                    </div>
+                    <div class="form-group">
+                        <label>建仓偏移 (USDT)</label>
+                        <input type="number" id="entry_offset" min="10" value="50">
+                        <small>建仓委托距离当前价的基础偏移</small>
+                    </div>
+                    <div class="form-group">
+                        <label>建仓调整间隔 (秒)</label>
+                        <input type="number" id="entry_adjust_interval" min="60" value="300">
+                        <small>多久检查并调整一次建仓委托价格</small>
+                    </div>
+                </div>
+
+                <div class="section-title">💰 止盈委托参数（独立配置）</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>止盈距离 (USDT)</label>
+                        <input type="number" id="tp_distance" min="50" value="130">
+                        <small>止盈价格距离开仓价的距离</small>
+                    </div>
+                    <div class="form-group">
+                        <label>止盈间距 (USDT)</label>
+                        <input type="number" id="tp_spacing" min="50" value="100">
+                        <small>分批止盈之间的价格间距</small>
+                    </div>
+                    <div class="form-group">
+                        <label>止盈调整间隔 (秒)</label>
+                        <input type="number" id="tp_adjust_interval" min="60" value="600">
+                        <small>多久检查并调整一次止盈委托价格</small>
+                    </div>
+                    <div class="form-group">
+                        <label>止盈调整阈值</label>
+                        <input type="number" id="tp_adjust_threshold" step="0.1" min="0.1" value="0.2">
+                        <small>距离变化超过该比例时触发调整（0.2=20%）</small>
+                    </div>
+                    <div class="form-group">
+                        <label>最小利润 (USDT)</label>
+                        <input type="number" id="tp_min_profit" step="0.1" min="0.1" value="0.5">
+                        <small>确保每笔交易的最小利润</small>
+                    </div>
+                </div>
+
+                <div class="section-title">⚙️ 高级交易选项</div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>快速成交模式</label>
+                        <select id="quick_fill">
+                            <option value="false">否 - 正常成交</option>
+                            <option value="true">是 - 缩小间距优先成交</option>
+                        </select>
+                        <small>启用后会自动缩小委托间距提高成交率</small>
+                    </div>
+                    <div class="form-group">
+                        <label>委托失败最大次数</label>
+                        <input type="number" id="max_failed_attempts" min="1" max="10" value="3">
+                        <small>超过次数后改为市价成交</small>
+                    </div>
+                    <div class="form-group">
+                        <label>强制入场超时 (秒)</label>
+                        <input type="number" id="force_entry_timeout" min="60" value="600">
+                        <small>无持仓超过该时间后强制入场</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🤖 AI 配置</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LM Studio 地址</label>
+                        <input type="text" id="lmstudio_url" value="http://192.168.1.114:1234/v1/chat/completions">
+                    </div>
+                    <div class="form-group">
+                        <label>AI 模型</label>
+                        <input type="text" id="model" value="qwen/qwen3-14b">
+                    </div>
+                    <div class="form-group">
+                        <label>Temperature</label>
+                        <input type="number" id="temperature" step="0.1" min="0" max="1" value="0.2">
+                        <small>0-1，越高越随机</small>
+                    </div>
+                    <div class="form-group">
+                        <label>AI 超时时间 (秒)</label>
+                        <input type="number" id="timeout" min="5" value="20">
+                        <small>AI 请求最大等待时间</small>
+                    </div>
+                    <div class="form-group">
+                        <label>最小等待时间 (秒)</label>
+                        <input type="number" id="min_wait_time" min="1" value="3">
+                        <small>AI 分析之间的最小间隔</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 风控配置 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>🛡️ 风险控制</h2>
+            </div>
+            <div class="card-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>最大持仓</label>
+                        <input type="number" id="max_position" step="0.001" value="0.1">
+                        <small>最大允许持仓数量（BTC）</small>
+                    </div>
+                    <div class="form-group">
+                        <label>最大亏损比例 (%)</label>
+                        <input type="number" id="max_loss_percent" step="0.1" value="2.0">
+                        <small>单笔交易最大亏损百分比</small>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable_auto_stop_loss" checked>
+                        <label for="enable_auto_stop_loss">启用自动止损</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="enable_auto_reduce" checked>
+                        <label for="enable_auto_reduce">启用自动减仓</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="save-btn" onclick="saveSettings()">💾 保存设置</button>
+    </div>
+
+    <script>
+        // 权重显示更新函数
+        function updateWeightDisplay(timeframe, value) {
+            // 更新显示值
+            document.getElementById(`weight_${timeframe}_value`).textContent = `${value}%`;
+            document.getElementById(`weight_${timeframe}_display`).textContent = `${value}%`;
+            
+            // 计算总权重
+            const total = calculateTotalWeight();
+            document.getElementById('total_weight').textContent = total;
+            
+            // 验证总权重
+            const statusEl = document.getElementById('weight_status');
+            if (total === 100) {
+                statusEl.textContent = '✓ 正常';
+                statusEl.style.color = '#2e7d32';
+            } else {
+                statusEl.textContent = `✗ 需要调整 (${total}%)`;
+                statusEl.style.color = total > 100 ? '#f44336' : '#ff9800';
+            }
+        }
+        
+        // 计算总权重
+        function calculateTotalWeight() {
+            const w1h = parseInt(document.getElementById('weight_1h').value);
+            const w30m = parseInt(document.getElementById('weight_30m').value);
+            const w15m = parseInt(document.getElementById('weight_15m').value);
+            const w5m = parseInt(document.getElementById('weight_5m').value);
+            const w1m = parseInt(document.getElementById('weight_1m').value);
+            return w1h + w30m + w15m + w5m + w1m;
+        }
+        
+        // 加载设置
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/settings', {
+                    credentials: 'same-origin'
+                });
+                const data = await response.json();
+
+                // 填充交易所配置
+                document.getElementById('mode').value = data.exchange.mode || 'testnet';
+                document.getElementById('symbol').value = data.exchange.symbol || 'BTCUSDT';
+                document.getElementById('leverage').value = data.exchange.leverage || 20;
+                document.getElementById('api_key').value = data.exchange.api_key || '';
+                document.getElementById('api_secret').value = data.exchange.api_secret || '';
+                document.getElementById('socks5_proxy').value = data.exchange.socks5_proxy || '';
+
+                // 填充技术指标
+                document.getElementById('timeframe_1h').checked = data.trading.timeframe_1h !== false;
+                document.getElementById('timeframe_30m').checked = data.trading.timeframe_30m !== false;
+                document.getElementById('timeframe_15m').checked = data.trading.timeframe_15m !== false;
+                document.getElementById('timeframe_5m').checked = data.trading.timeframe_5m !== false;
+                document.getElementById('timeframe_1m').checked = data.trading.timeframe_1m !== false;
+
+                // 填充交易参数
+                document.getElementById('grid_levels').value = data.trading.grid_levels || 5;
+                document.getElementById('base_qty').value = data.trading.base_qty || 0.002;
+                document.getElementById('min_qty').value = data.trading.min_qty || 0.001;
+                document.getElementById('max_qty').value = data.trading.max_qty || 0.1;
+                
+                // 建仓委托参数
+                document.getElementById('grid_spacing').value = data.trading.grid_spacing || 50;
+                document.getElementById('entry_offset').value = data.trading.entry_offset || 50;
+                document.getElementById('entry_adjust_interval').value = data.trading.entry_adjust_interval || 300;
+                
+                // 止盈委托参数
+                document.getElementById('tp_distance').value = data.trading.tp_distance || 130;
+                document.getElementById('tp_spacing').value = data.trading.tp_spacing || 100;
+                document.getElementById('tp_adjust_interval').value = data.trading.tp_adjust_interval || 600;
+                document.getElementById('tp_adjust_threshold').value = data.trading.tp_adjust_threshold || 0.2;
+                document.getElementById('tp_min_profit').value = data.trading.tp_min_profit || 0.5;
+                
+                // 其他参数
+                document.getElementById('quick_fill').value = data.trading.quick_fill ? 'true' : 'false';
+                document.getElementById('max_failed_attempts').value = data.trading.max_failed_attempts || 3;
+                document.getElementById('force_entry_timeout').value = data.trading.force_entry_timeout || 600;
+
+                // 填充 AI 配置
+                document.getElementById('lmstudio_url').value = data.ai.lmstudio_url || '';
+                document.getElementById('model').value = data.ai.model || '';
+                document.getElementById('temperature').value = data.ai.temperature || 0.2;
+                document.getElementById('timeout').value = data.ai.timeout || 20;
+                document.getElementById('min_wait_time').value = data.ai.min_wait_time || 3;
+
+                // 填充风控配置
+                document.getElementById('max_position').value = data.risk.max_position || 0.1;
+                document.getElementById('max_loss_percent').value = data.risk.max_loss_percent || 2.0;
+                document.getElementById('enable_auto_stop_loss').checked = data.risk.enable_auto_stop_loss !== false;
+                document.getElementById('enable_auto_reduce').checked = data.risk.enable_auto_reduce !== false;
+
+            } catch (error) {
+                console.error('加载设置失败:', error);
+                alert('加载设置失败，请检查网络连接');
+            }
+        }
+
+        // 保存设置
+        async function saveSettings() {
+            const settings = {
+                exchange: {
+                    mode: document.getElementById('mode').value,
+                    symbol: document.getElementById('symbol').value,
+                    leverage: parseInt(document.getElementById('leverage').value),
+                    api_key: document.getElementById('api_key').value,
+                    api_secret: document.getElementById('api_secret').value,
+                    socks5_proxy: document.getElementById('socks5_proxy').value
+                },
+                trading: {
+                    grid_levels: parseInt(document.getElementById('grid_levels').value),
+                    base_qty: parseFloat(document.getElementById('base_qty').value),
+                    min_qty: parseFloat(document.getElementById('min_qty').value),
+                    max_qty: parseFloat(document.getElementById('max_qty').value),
+                    
+                    // 建仓委托参数
+                    grid_spacing: parseInt(document.getElementById('grid_spacing').value),
+                    entry_offset: parseInt(document.getElementById('entry_offset').value),
+                    entry_adjust_interval: parseInt(document.getElementById('entry_adjust_interval').value),
+                    
+                    // 止盈委托参数
+                    tp_distance: parseInt(document.getElementById('tp_distance').value),
+                    tp_spacing: parseInt(document.getElementById('tp_spacing').value),
+                    tp_adjust_interval: parseInt(document.getElementById('tp_adjust_interval').value),
+                    tp_adjust_threshold: parseFloat(document.getElementById('tp_adjust_threshold').value),
+                    tp_min_profit: parseFloat(document.getElementById('tp_min_profit').value),
+                    
+                    // 其他参数
+                    quick_fill: document.getElementById('quick_fill').value === 'true',
+                    max_failed_attempts: parseInt(document.getElementById('max_failed_attempts').value),
+                    force_entry_timeout: parseInt(document.getElementById('force_entry_timeout').value),
+                    timeframe_1h: document.getElementById('timeframe_1h').checked,
+                    timeframe_30m: document.getElementById('timeframe_30m').checked,
+                    timeframe_15m: document.getElementById('timeframe_15m').checked,
+                    timeframe_5m: document.getElementById('timeframe_5m').checked,
+                    timeframe_1m: document.getElementById('timeframe_1m').checked,
+                    
+                    // 权重参数
+                    weight_1h: parseInt(document.getElementById('weight_1h').value),
+                    weight_30m: parseInt(document.getElementById('weight_30m').value),
+                    weight_15m: parseInt(document.getElementById('weight_15m').value),
+                    weight_5m: parseInt(document.getElementById('weight_5m').value),
+                    weight_1m: parseInt(document.getElementById('weight_1m').value)
+                },
+                ai: {
+                    lmstudio_url: document.getElementById('lmstudio_url').value,
+                    model: document.getElementById('model').value,
+                    temperature: parseFloat(document.getElementById('temperature').value),
+                    timeout: parseInt(document.getElementById('timeout').value),
+                    min_wait_time: parseInt(document.getElementById('min_wait_time').value)
+                },
+                risk: {
+                    max_position: parseFloat(document.getElementById('max_position').value),
+                    max_loss_percent: parseFloat(document.getElementById('max_loss_percent').value),
+                    enable_auto_stop_loss: document.getElementById('enable_auto_stop_loss').checked,
+                    enable_auto_reduce: document.getElementById('enable_auto_reduce').checked
+                }
+            };
+
+            try {
+                const response = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings),
+                    credentials: 'same-origin'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // 显示成功消息
+                    const msg = document.getElementById('successMessage');
+                    msg.style.display = 'block';
+                    setTimeout(() => {
+                        msg.style.display = 'none';
+                    }, 3000);
+                } else {
+                    alert('保存失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('保存失败:', error);
+                alert('保存失败，请检查网络连接');
+            }
+        }
+
+        // 页面加载时获取设置
+        window.onload = loadSettings;
+    </script>
+</body>
+</html>
